@@ -8,7 +8,7 @@
         <!-- 复选框 -->
         <a-checkbox :checked="item.done">{{item.info}}</a-checkbox>
         <!-- 删除链接 -->
-        <a slot="actions">删除</a>
+        <a slot="actions" @click="handleDelete(item.id)">删除</a>
       </a-list-item>
 
       <!-- footer区域 -->
@@ -46,6 +46,9 @@ export default {
     },
     handleViewChange (type) {
       this.$store.commit('changeStatus', type)
+    },
+    handleDelete (id) {
+      this.$store.commit('deleteItem', id)
     }
   },
   mounted () {

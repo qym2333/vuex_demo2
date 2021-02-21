@@ -18,6 +18,7 @@ export default new Vuex.Store({
     setInputValue (state, val) {
       state.inputValue = val
     },
+    // 添加项
     addItem (state) {
       const item = {
         id: state.nextId,
@@ -27,6 +28,15 @@ export default new Vuex.Store({
       state.list.push(item)
       state.nextId++
       state.inputValue = ''
+    },
+    // 删除项
+    deleteItem (state, id) {
+      const index = state.list.findIndex((item) => {
+        if (item.id === id) return true
+      })
+      if (index !== -1) {
+        state.list.splice(index, 1)
+      }
     },
     // 修改状态
     changeStatus (state, type) {
@@ -40,10 +50,11 @@ export default new Vuex.Store({
     }
   },
   getters: {
-    // 统计未完成任务的条数
+    // 统计未完成任务的数量
     undoLength (state) {
       return state.list.filter(item => item.done === false).length
     },
+    // 筛选列表
     todoList (state) {
       if (state.status === 'all') {
         return state.list
