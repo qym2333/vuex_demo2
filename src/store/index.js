@@ -29,19 +29,36 @@ export default new Vuex.Store({
       state.nextId++
       state.inputValue = ''
     },
-    // 删除项
-    deleteItem (state, id) {
-      const index = state.list.findIndex((item) => {
+    // 根据id删除事项
+    deleteItemById (state, id) {
+      const index = state.list.findIndex(item => {
         if (item.id === id) return true
       })
       if (index !== -1) {
         state.list.splice(index, 1)
       }
     },
-    // 修改状态
-    changeStatus (state, type) {
+    // 修改事项状态
+    cbItemChanged (state, params) {
+      const index = state.list.findIndex(item => {
+        if (item.id === params.id) return true
+      })
+      if (index !== -1) {
+        state.list[index].done = params.checked
+      }
+      // state.list.reduce((acc, cur) => {
+      //   if (cur.id === params.id) {
+      //     cur.done = params.checked
+      //     return acc
+      //   }
+      //   return acc
+      // }, [])
+    },
+    // 筛选列表
+    changeViewStatus (state, type) {
       state.status = type
-    }
+    },
+
   },
   actions: {
     async getList (context) {

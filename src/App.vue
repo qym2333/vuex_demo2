@@ -6,9 +6,9 @@
     <a-list bordered :dataSource="$store.getters.todoList" class="dt_list">
       <a-list-item slot="renderItem" slot-scope="item">
         <!-- 复选框 -->
-        <a-checkbox :checked="item.done">{{item.info}}</a-checkbox>
+        <a-checkbox :checked="item.done" @change="cbItemChanged($event,item.id)">{{item.info}}</a-checkbox>
         <!-- 删除链接 -->
-        <a slot="actions" @click="handleDelete(item.id)">删除</a>
+        <a slot="actions" @click="deleteItemById(item.id)">删除</a>
       </a-list-item>
 
       <!-- footer区域 -->
@@ -17,9 +17,9 @@
         <span>{{$store.getters.undoLength}}条剩余</span>
         <!-- 操作按钮 -->
         <a-button-group>
-          <a-button :type="status === 'all' ? 'primary' : 'default'" @click="handleViewChange('all')">全部</a-button>
-          <a-button :type="status === 'undo' ? 'primary' : 'default'" @click="handleViewChange('undo')">未完成</a-button>
-          <a-button :type="status === 'done' ? 'primary' : 'default'" @click="handleViewChange('done')">已完成</a-button>
+          <a-button :type="status === 'all' ? 'primary' : 'default'" @click="changeViewStatus('all')">全部</a-button>
+          <a-button :type="status === 'undo' ? 'primary' : 'default'" @click="changeViewStatus('undo')">未完成</a-button>
+          <a-button :type="status === 'done' ? 'primary' : 'default'" @click="changeViewStatus('done')">已完成</a-button>
         </a-button-group>
         <!-- 把已经完成的任务清空 -->
         <a>清除已完成</a>
@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapMutations } from 'vuex'
 export default {
   name: 'app',
   data () {
@@ -37,6 +37,7 @@ export default {
     }
   },
   methods: {
+    ...mapMutations(['deleteItemById', 'changeViewStatus']),
     handleChange (e) {
       this.$store.commit('setInputValue', e.target.value)
     },
@@ -44,11 +45,9 @@ export default {
       if (!this.inputValue.trim()) return this.$message.warning('内容不能为空！')
       this.$store.commit('addItem')
     },
-    handleViewChange (type) {
-      this.$store.commit('changeStatus', type)
-    },
-    handleDelete (id) {
-      this.$store.commit('deleteItem', id)
+    cbItemChanged (e, id) {
+      const params = { checked: e.target.checked, id }
+      this.$store.commit('cbItemChanged', params)
     }
   },
   mounted () {
