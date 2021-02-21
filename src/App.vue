@@ -3,7 +3,7 @@
     <a-input placeholder="请输入任务" class="my_ipt" :value="inputValue" @change="handleChange" />
     <a-button type="primary" @click="handleAddItem">添加事项</a-button>
 
-    <a-list bordered :dataSource="$store.getters.todoList" class="dt_list">
+    <a-list bordered :dataSource="todoList" class="dt_list">
       <a-list-item slot="renderItem" slot-scope="item">
         <!-- 复选框 -->
         <a-checkbox :checked="item.done" @change="cbItemChanged(item.id)">{{item.info}}</a-checkbox>
@@ -50,7 +50,7 @@ export default {
     this.$store.dispatch('getList')
   },
   computed: {
-    ...mapGetters(['undoLength']),
+    ...mapGetters(['undoLength', 'todoList']),
     ...mapState(['list', 'inputValue', 'status'])
   },
 }
