@@ -6,7 +6,7 @@
     <a-list bordered :dataSource="$store.getters.todoList" class="dt_list">
       <a-list-item slot="renderItem" slot-scope="item">
         <!-- 复选框 -->
-        <a-checkbox :checked="item.done" @change="cbItemChanged($event,item.id)">{{item.info}}</a-checkbox>
+        <a-checkbox :checked="item.done" @change="cbItemChanged(item.id)">{{item.info}}</a-checkbox>
         <!-- 删除链接 -->
         <a slot="actions" @click="deleteItemById(item.id)">删除</a>
       </a-list-item>
@@ -14,7 +14,7 @@
       <!-- footer区域 -->
       <div slot="footer" class="footer">
         <!-- 未完成的任务个数 -->
-        <span>{{$store.getters.undoLength}}条剩余</span>
+        <span>{{undoLength}}条剩余</span>
         <!-- 操作按钮 -->
         <a-button-group>
           <a-button :type="status === 'all' ? 'primary' : 'default'" @click="changeViewStatus('all')">全部</a-button>
@@ -22,14 +22,14 @@
           <a-button :type="status === 'done' ? 'primary' : 'default'" @click="changeViewStatus('done')">已完成</a-button>
         </a-button-group>
         <!-- 把已经完成的任务清空 -->
-        <a>清除已完成</a>
+        <a @click="clearDoneItem">清除已完成</a>
       </div>
     </a-list>
   </div>
 </template>
 
 <script>
-import { mapState, mapMutations } from 'vuex'
+import { mapState, mapMutations, mapGetters } from 'vuex'
 export default {
   name: 'app',
   data () {
@@ -37,23 +37,20 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['deleteItemById', 'changeViewStatus']),
+    ...mapMutations(['deleteItemById', 'changeViewStatus', 'cbItemChanged', 'clearDoneItem']),
     handleChange (e) {
       this.$store.commit('setInputValue', e.target.value)
     },
     handleAddItem () {
       if (!this.inputValue.trim()) return this.$message.warning('内容不能为空！')
       this.$store.commit('addItem')
-    },
-    cbItemChanged (e, id) {
-      const params = { checked: e.target.checked, id }
-      this.$store.commit('cbItemChanged', params)
     }
   },
   mounted () {
     this.$store.dispatch('getList')
   },
   computed: {
+    ...mapGetters(['undoLength']),
     ...mapState(['list', 'inputValue', 'status'])
   },
 }
